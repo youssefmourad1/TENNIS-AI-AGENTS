@@ -1,0 +1,155 @@
+Tennis AI 2.0 - Parcours Joueur Débutant (Front-App) - Piloté par AI-Agent
+Document pour développeur front-end. L'AI-Agent (CoachBot) guide l'utilisateur du premier écran jusqu'à l'output. Les métriques restent côté back-end et pilotent la logique de progression, mais ne sont pas exposées en détail au joueur débutant.
+?? Principe directeur
+* Toujours démarrer par une analyse de niveau filmée (5-7 frappes, idéalement 1-2 angles).
+* Langage simple, visuel; 1 compétence/erreur à la fois; comparaison joueur vs modèle débutant.
+* Boucle courte : filmer ? détecter l'erreur principale ? corriger en live ? sauvegarder progression.
+* AI-Agent parle/affiche les consignes; le joueur peut cliquer ou répondre vocalement.
+Scénario A - Première utilisation du joueur débutant
+Objectif : découvrir l'app, déterminer le niveau réel, commencer par une seule compétence fondamentale.
+1) Onboarding / Connexion
+UI :
+* Logo + animation; bouton " Commencer ".
+* Choix de connexion : Apple / Google / Microsoft / Email.
+* Consentements : caméra, micro.
+AI-Agent :
+* " Salut ?? ! Je vais t'aider à apprendre le tennis pas à pas. "
+* " On commence par voir comment tu joues aujourd'hui. "
+Actions utilisateur :
+* Se connecter/s'inscrire
+* Autoriser la caméra et le micro
+Données envoyées au back-end :
+* user_id, méthode login, langue, fuseau horaire
+* statut permissions (caméra/micro)
+2) Test de niveau (5-7 frappes, 1-2 angles)
+UI :
+* Écran caméra avec repères simples (position au sol, distance).
+* Option " Ajouter un angle " (frontale/latérale).
+AI-Agent :
+* " Place-toi ici. Je filme 5 à 7 frappes pour évaluer ton niveau. "
+* " Si possible, filme aussi sous un second angle. "
+Actions utilisateur :
+* Filmer 5-7 frappes
+* Option : filmer un second angle
+Données envoyées au back-end :
+* clips[] (id, angle, horodatage)
+* contexte : geste générique débutant (coup droit à blanc possible)
+3) Analyse du niveau & orientation
+UI :
+* Écran résultat : vignette joueur vs modèle débutant.
+* Etiquette niveau estimé : " Débutant (confirmé) ".
+AI-Agent :
+* " J'ai analysé tes vidéos. On va commencer par ta position de départ et la tenue de raquette. "
+Actions utilisateur :
+* Continuer ? Première correction
+Données envoyées au back-end :
+* niveau_estime, confiance_niveau
+* erreur_principale_id (catégorie: fondations)
+4) Première correction (fondation 1)
+UI :
+* Comparatif 2 images : joueur (erreur surlignée) vs modèle (posture correcte).
+* Bouton " Corriger en temps réel ".
+AI-Agent :
+* " Écarte les pieds largeur d'épaules et fléchis légèrement les genoux. "
+* " On corrige ensemble en live. "
+Actions utilisateur :
+* Passer en live
+* Répéter jusqu'à valider (2-3 réussites)
+Données envoyées au back-end :
+* metrics_avant (posture)
+* metrics_apres (validation verte)
+5) Clôture & plan de suite
+UI :
+* Carte progression : +X % sur la posture.
+* CTA : " Continuer demain " / " Refaire maintenant ".
+AI-Agent :
+* " Super ! Tu as validé la base 1. Demain, on ajoutera la préparation du geste. "
+Actions utilisateur :
+* Sauvegarder et quitter
+* Planifier un rappel
+Données envoyées au back-end :
+* session_id, compétence_validée=posture_base
+* prochaine_competence=préparation_geste
+Scénario B - Retour du joueur débutant (2? session)
+Objectif : réviser la base 1, ajouter la base 2 (préparation du geste), boucler correction live.
+1) Accueil personnalisé
+UI :
+* Bannière " Hier : Posture de départ (+12 %) ".
+* Boutons : " Continuer programme " / " Revoir la posture ".
+AI-Agent :
+* " Hier, tu as bien progressé sur la posture. Aujourd'hui, on ajoute la préparation du geste. "
+Actions utilisateur :
+* Continuer programme
+* Revoir la posture
+Données envoyées au back-end :
+* historique_sessions, progression%_posture
+2) Révision express (base 1)
+UI :
+* Mini-clip d'hier (avant/après).
+* Live check rapide : overlay vert/rouge.
+AI-Agent :
+* " Reprends ta posture... parfait quand c'est vert. "
+Actions utilisateur :
+* Valider posture (2 réussites)
+Données envoyées au back-end :
+* metrics_check_posture
+3) Nouvelle compétence : préparation (backswing simplifié)
+UI :
+* Gif/animation du modèle débutant.
+* Caméra live avec repères.
+AI-Agent :
+* " Recule la raquette tranquille, garde l'épaule stable. On y va. "
+Actions utilisateur :
+* Filmer 3-5 essais
+* Valider quand c'est vert
+Données envoyées au back-end :
+* metrics_preparation_avant/apres
+* erreur_principale_id=préparation
+4) Clôture & plan de suite
+UI :
+* Carte progression globale : Posture ?, Préparation ?.
+* CTA : " Prochaine étape : contact avec la balle ".
+AI-Agent :
+* " Bien joué ! La prochaine fois, on travaille le contact. "
+Actions utilisateur :
+* Sauvegarder
+* Planifier rappel / partager progression
+Données envoyées au back-end :
+* compétences_validées=[posture, préparation]
+* next_step=contact
+Scénario C - Débutant après plusieurs sessions (mode progression)
+Objectif : suivre un programme structuré (fondations), piloté par les métriques, avec une progression claire et motivante.
+1) Tableau de bord " Programme Débutant "
+UI :
+* Étapes : Posture ? Préparation ? Contact ? Suivi du geste ? Mise en jeu.
+* Progress bar (%) + badges (" Posture validée ", " 3 séances d'affilée ").
+AI-Agent :
+* " Tu es à 40 % de ton programme. Aujourd'hui : le timing au contact. "
+Actions utilisateur :
+* Choisir " Continuer " ou " Revoir une base "
+Données envoyées au back-end :
+* progression_globale%, liste_compétences, recommandations
+2) Séance ciblée : le contact
+UI :
+* Rappel vidéo du modèle débutant.
+* Caméra live; capture 5 frappes; overlay vert/rouge au moment du contact.
+AI-Agent :
+* " Regarde la balle, frappe devant toi, bras relâché. "
+Actions utilisateur :
+* Filmer 5 frappes
+* Valider 2-3 contacts corrects
+Données envoyées au back-end :
+* metrics_contact_avant/apres
+* erreur_principale_id=contact
+3) Clôture & motivation
+UI :
+* Graphique progression par compétence.
+* Boutons : " Prochaine étape : suivi du geste " / " Partager ".
+AI-Agent :
+* " Bravo, tu progresses vite. On vise 60 % la semaine prochaine ! "
+Actions utilisateur :
+* Sauvegarder
+* Partager
+* Planifier prochaine séance
+Données envoyées au back-end :
+* stats_session, progression_mise_a_jour, prochaine_competence=suivi

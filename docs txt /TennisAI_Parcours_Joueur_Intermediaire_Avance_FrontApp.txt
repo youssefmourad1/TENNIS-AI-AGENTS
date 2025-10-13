@@ -1,0 +1,172 @@
+Tennis AI 2.0 - Joueur Intermédiaire / Intermédiaire-Avancé (Front-App)
+Document pour développeur front-end. L'AI-Agent (CoachBot) guide l'utilisateur du premier écran jusqu'à l'output. Les métriques sont affichées de façon synthétique (timing, angles, vitesse) et guident la correction " une métrique à la fois ". Ce document décrit 3 scénarios complets : Première utilisation, Retour, Power user.
+Principes UX clés
+* Analyse courte et ciblée : 1-2 clips par geste suffisent pour détecter l'erreur principale.
+* Comparaison joueur vs pro (même phase) avec 3 métriques visibles max.
+* Langage de performance et objectifs chiffrés. File d'attente (Next Priority).
+* Deux modes : Analyse complète / Pose-par-pose (si détection incertaine ou besoin d'affiner une phase).
+Scénario A - Première utilisation (découverte + première correction)
+1) Onboarding express
+UI :
+* Connexion rapide : Apple / Google / Email.
+* Rôle : Joueur. Niveau : Intermédiaire-Avancé.
+AI-Agent :
+* " Bienvenue. On va identifier rapidement ce qui te coûte le plus de points et le corriger. "
+Actions utilisateur :
+* Se connecter
+* Sélectionner niveau
+Données back-end :
+* user_id, role=player, level=intermediate_adv, locale
+* permissions caméra/micro
+2) Choix du geste
+UI :
+* Boutons animés : Service / Coup droit / Revers / Volée/Retour
+AI-Agent :
+* " Quel coup veux-tu optimiser aujourd'hui ? "
+Actions utilisateur :
+* Choisir un geste (ex : Service)
+Données back-end :
+* selected_stroke=serve
+3) Capture rapide (1-2 clips)
+UI :
+* Caméra avec repères au sol et cadrage.
+* Compteur 2 tentatives recommandées.
+AI-Agent :
+* " Envoie 1 à 2 services. Je calcule timing, rotation hanche/épaule et vitesse de tête de raquette. "
+Actions utilisateur :
+* Filmer 1-2 clips
+* Revoir/valider
+Données back-end :
+* clips[], contexte (surface, main), fps, durée
+4) Résultat & comparaison (détection principale)
+UI :
+* Carte Erreur principale.
+* Comparatif 2 images : joueur vs pro (même phase).
+* 3 métriques visibles (ex : timing impact +0,11 s ; angle épaule -8° ; vitesse raquette -6 %).
+AI-Agent :
+* " Ton timing est tardif de 0,11 s. On vise -0,05 s maintenant. "
+Actions utilisateur :
+* Corriger en temps réel
+* Voir détails métriques
+Données back-end :
+* main_error, metrics{timing_ms, shoulder_angle_deg, racquet_speed}, confidence
+5) Correction live (focus métrique)
+UI :
+* Caméra + overlays dynamiques.
+* Métronome visuel/sonore ; jauge " Contact Window ".
+AI-Agent :
+* " Avance ton point d'impact de 15 cm. 3 tentatives validées et on verrouille. "
+Actions utilisateur :
+* Réaliser 3-5 essais
+* Valider lorsque " vert "
+Données back-end :
+* metrics_after, delta_timing_ms, attempts, success_flag
+6) Clôture
+UI :
+* Progression +X %
+* CTA : " Prochaine priorité " (ex : rotation hanche) / " Refaire "
+AI-Agent :
+* " +9 % sur le timing en 5 minutes. Je propose la rotation de hanche ensuite. "
+Actions utilisateur :
+* Choisir prochaine priorité
+* Terminer
+Données back-end :
+* session_id, improvement_percent, next_priority_queue[]
+Scénario B - Retour (2? session : poursuivre ou changer d'axe)
+1) Accueil personnalisé
+UI :
+* Bandeau : " Hier : Timing impact +9 % "
+* Boutons : Continuer / Nouveau geste / Stats
+AI-Agent :
+* " On stabilise ton timing ou on passe à la rotation de hanche ? "
+Actions utilisateur :
+* Choisir un chemin
+Données back-end :
+* last_session, next_priority, suggested_focus
+2) Chemin " Continuer " (stabiliser l'axe en cours)
+UI :
+* Caméra live ouverte directement
+* Rappel visuel du repère timing
+AI-Agent :
+* " Cible -0,05 s. 3 coups validés d'affilée et on verrouille. "
+Actions utilisateur :
+* 3-5 essais
+* Valider
+Données back-end :
+* metrics_series, lock_on_success
+3) Chemin " Nouveau geste "
+UI :
+* Choix du geste ? capture 1-2 clips ? résultat ? correction live
+AI-Agent :
+* " Sur le revers : angle coude trop fermé (+12° vs réf.). Vise 90-100°. "
+Actions utilisateur :
+* Filmer
+* Corriger en live
+Données back-end :
+* main_error_backhand, metrics{elbow_angle_deg}
+4) Chemin " Stats complètes "
+UI :
+* Graphiques : timing trend, angles (épaules/hanche), vitesse max, constance
+AI-Agent :
+* " Point fort : vitesse raquette. Axe à gagner : rotation hanche +10°. "
+Actions utilisateur :
+* Lancer session ciblée depuis une métrique
+Données back-end :
+* metrics_timeseries, filters, export_ready_flag
+5) Clôture
+UI :
+* Résumé progression
+* Next Priority surfacée
+AI-Agent :
+* " Top. Je programme rotation hanche la prochaine fois ? "
+Actions utilisateur :
+* Programmer rappel
+* Terminer
+Données back-end :
+* plan_next_session, reminder_opt_in
+Scénario C - Power user (mode Performance & Métriques)
+1) Dashboard Performance
+UI :
+* Tuiles par coup (Service / CD / RV / Retour) avec % 7j/30j.
+* Section " Cibles perso " (ex : Vitesse raquette +8 %, Angle hanche +10°).
+AI-Agent :
+* " Où gagne-t-on le plus aujourd'hui ? Choisis une métrique. "
+Actions utilisateur :
+* Sélectionner une métrique ou une phase (Trophy, Accélération, Impact)
+Données back-end :
+* target_metric (hip_rotation_deg, racquet_speed, contact_timing_ms)
+2) Session ciblée par métrique
+UI :
+* Mini comparatif joueur vs pro sur la phase choisie.
+* Seuils/tolérances dynamiques affichés.
+AI-Agent :
+* " Vise hip rotation +10° en 2 séances. Voici ton repère visuel. "
+Actions utilisateur :
+* Capturer 1-2 clips
+* Corriger en live
+* Valider
+Données back-end :
+* metric_before/after, confidence, camera_angle_meta
+3) Combos & scénarisation point (Service ? 1er CD)
+UI :
+* Mode chaîne : enchaîner deux coups.
+* Retour double métrique : timing + profondeur.
+AI-Agent :
+* " On mesure l'enchaînement. Je corrige l'élément limitant. "
+Actions utilisateur :
+* Filmer la séquence combo
+* Corriger
+Données back-end :
+* combo_metrics, bottleneck_metric
+4) Clôture orientée compétition
+UI :
+* Score d'état de forme (7 derniers jours)
+* Export " brief séance " (texte) ; défis/paliers
+AI-Agent :
+* " Match-ready : 72 %. Cible 80 % d'ici samedi : timing + rotation. "
+Actions utilisateur :
+* Sauvegarder
+* Partager
+* Planifier prochaine séance
+Données back-end :
+* readiness_score, plan_reco

@@ -1,0 +1,32 @@
+Tennis AI 2.0 - Parcours Coach (piloté par AI-Agent)
+?? Principe directeur
+* AI-Agent = chef d'orchestre : c'est lui qui parle, pose des questions, oriente les choix, explique, montre et félicite.
+* Interaction continue : chaque étape est validée ou personnalisée via le dialogue avec le CoachBot.
+* Un objectif ? une action ? un feedback clair.
+Scénario A - Première utilisation du coach
+Objectif : filmer un élève, identifier l'erreur principale, montrer la correction, proposer l'exercice en temps réel.
+1. Accueil (piloté par AI-Agent) : " Bonjour Coach ??, prêt pour travailler aujourd'hui ? Quel geste veux-tu analyser ? " ? Coach répond oralement ou par clic : Service. ? AI-Agent : " Parfait, on ouvre le module Service. La caméra est prête. "
+2. Choix du niveau : " Quel est le niveau de ton élève aujourd'hui ? " ? Options : Débutant / Intermédiaire / Avancé / Pro ? AI-Agent ajuste tolérances et précision.
+3. Choix du type d'analyse : " Souhaites-tu que je filme tout le geste ou qu'on analyse pose par pose ? " ? Analyse complète (1 vidéo) ou Pose par pose (6 étapes guidées).
+4. Capture : " Mets-toi derrière l'élève. C'est bon... Action ! " ? Le coach filme ? " Parfait, j'analyse... "
+5. Résultat + correction : " L'erreur principale est la position du coude à la trophy position. Regarde : à gauche, ton élève. À droite, un joueur pro. " ? Comparaison + consigne courte.
+6. Proposition de correction en temps réel : " On corrige maintenant en live ? " ? Caméra overlay vert/rouge + feedback vocal.
+7. Clôture & suivi : " Bien joué coach, on a amélioré de 15 % la position. Veux-tu voir la prochaine erreur à corriger ou planifier un exercice ? " ? Sauvegarde auto.
+Scénario B - Retour du coach (2? visite)
+Objectif : reprendre immédiatement là où il s'était arrêté, continuer sur la prochaine erreur à corriger ou refaire une nouvelle analyse.
+8. Accueil personnalisé : " Bonjour Coach ??, hier nous avons travaillé la trophy position de Lucas. Résultat : +12 % de précision. Veux-tu que l'on continue sur la prochaine erreur ou que l'on commence un nouveau geste ? " ? Options : Continuer dernière session / Nouveau geste / Changer d'élève.
+9. Continuer dernière session : " Parfait. Nous allons travailler [Nom de l'erreur]. Caméra prête. " ? Ouverture directe du mode capture vidéo avec les paramètres précédents ? Capture ? Analyse ? Comparaison élève / pro ? Proposition correction en temps réel.
+10. Nouveau geste : Retour à la séquence courte : choix du geste, choix du niveau, choix du type d'analyse, capture vidéo guidée, détection erreur principale, comparaison, correction live.
+11. Clôture & suivi : " Bien joué, coach. Tu as amélioré de X % la précision sur [Nom de l'erreur]. Prochaine étape disponible dans la file des erreurs. " ? Options : Passer à l'erreur suivante / Retour à l'accueil.
+Scénario C - Coach avec plusieurs élèves
+Objectif : gérer un groupe d'élèves, accéder rapidement aux infos de chacun, lancer des analyses ciblées.
+12. Accueil ? " Mes Élèves " : " Tu as 8 élèves actifs aujourd'hui. Qui veux-tu analyser ? " ? Liste avec photo, date dernière session, geste travaillé, progression %, badge 'Nouvelle erreur détectée'. ? Actions possibles : recherche / filtre par geste, niveau, date.
+13. Fiche élève : " La dernière fois, nous avons corrigé le timing du lancer de balle. Progression : +18 %. La prochaine erreur à corriger est la rotation de hanche. " ? UI : graphique progression %, vidéos récentes, erreurs corrigées, prochaine erreur.
+14. Nouvelle analyse ciblée : choix Continuer sur la prochaine erreur ou Nouveau geste ? Capture vidéo guidée par AI-Agent ? Analyse ? Comparaison élève / pro ? Correction live.
+15. Correction en temps réel : Caméra + overlays verts/rouges ? Feedback vocal court ? Validation après 2-3 répétitions correctes.
+16. Clôture & suivi : " Session enregistrée. Tu veux travailler un autre élève ou continuer avec [Nom] ? " ? Sauvegarde des métriques dans la fiche élève.
+Points essentiels pour tous les parcours
+* Interaction 100 % guidée par l'AI-Agent (voix + texte).
+* 1 seule erreur à corriger par session ? plus de clarté et de focus.
+* Comparaison systématique avec un joueur pro (métriques réelles).
+* Sauvegarde auto dans un tableau de progression par élève.

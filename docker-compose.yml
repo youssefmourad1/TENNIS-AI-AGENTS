@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  tennis-ai:
+    build: .
+    container_name: tennis-ai-onboarding
+    ports:
+      - "8501:8501"
+    environment:
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_SESSION_TOKEN=${AWS_SESSION_TOKEN}
+    volumes:
+      - ./sessions:/app/sessions
+    restart: unless-stopped
+    networks:
+      - tennis-ai-network
+
+networks:
+  tennis-ai-network:
+    driver: bridge
+

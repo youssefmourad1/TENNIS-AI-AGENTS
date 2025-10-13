@@ -1,0 +1,44 @@
+Tennis AI 2.0 - Parcours Front-App (Coach)
+AI-Agent actif de l'onboarding à l'output, avec un dialogue continu entre le coach et l'assistant virtuel. Ce document détaille l'expérience utilisateur et le parcours écran par écran pour le développeur front-end.
+Écran 1 - Onboarding / Connexion
+* UI : Logo Tennis AI + animation d'accueil, bouton 'Commencer', choix connexion : Apple / Google / Microsoft / Email.
+* AI-Agent : " Bonjour Coach ??, je vais t'accompagner à chaque étape. On commence par te connaître un peu... "
+* Actions Coach : Connexion / inscription, accepter micro et caméra.
+* Données envoyées : ID utilisateur, méthode login, langue, fuseau horaire.
+Écran 2 - Choix du profil et du rôle
+* UI : Deux cartes : 'Je suis joueur' / 'Je suis coach'.
+* Coach ? page niveau : Débutant / Intermédiaire / Avancé / Pro.
+* AI-Agent : " Tu es coach, parfait. Quel est ton niveau d'expertise ? "
+* Actions : Sélectionner niveau.
+* Données : Rôle = coach, niveau coach.
+Écran 3 - Accueil personnalisé
+* UI : CoachBot en avatar animé, 4 gestes : Service / Coup droit / Revers / Exercices.
+* AI-Agent : " Quel geste veux-tu travailler aujourd'hui ? "
+* Actions : Choisir un geste.
+* Données : Geste sélectionné ? déclenche chargement du module vidéo adapté.
+Écran 4 - Choix du type d'analyse
+* UI : 2 cartes : 'Analyse complète' / 'Détection pose par pose'.
+* Si pose par pose ? affichage des 6 poses clés.
+* AI-Agent : " Tu préfères que je filme tout le geste ou qu'on analyse pose par pose ? "
+* Actions : Choisir un mode.
+* Données : Type analyse = complet ou pose.
+Écran 5 - Capture vidéo
+* UI : Caméra + repères visuels, bouton 'Enregistrer', tips overlay (ex : cadrage, lumière).
+* AI-Agent : " Mets-toi derrière l'élève. Quand tu es prêt, clique sur Enregistrer. "
+* Actions : Filmer le geste, relire / valider vidéo.
+* Données : Vidéo envoyée au back pour analyse IA.
+Écran 6 - Résultat principal
+* UI : Titre 'Erreur principale détectée', 2 images : élève / pro, rectangles verts/rouges, court texte de correction, bouton 'Corriger en temps réel'.
+* AI-Agent : " L'erreur la plus importante est [X]. Compare ton élève à ce joueur pro. "
+* Actions : Voir comparaison, passer en correction live.
+* Données : Erreur ID, métriques avant correction.
+Écran 7 - Correction en temps réel
+* UI : Caméra avec overlays verts/rouges, indicateurs visuels + audio.
+* AI-Agent : " Maintiens la position... vert = parfait, rouge = ajuste. "
+* Actions : Faire corriger l'élève, valider session.
+* Données : % réussite, métriques après correction.
+Écran 8 - Clôture & Suivi
+* UI : Graphique progression (% avant/après), badge de réussite, boutons : 'Prochaine erreur' / 'Retour à l'accueil'.
+* AI-Agent : " Bravo Coach, +15 % sur cette posture. On attaque la prochaine erreur ? "
+* Actions : Continuer avec autre erreur, sauvegarder et quitter.
+* Données : Sauvegarde complète session : élève, geste, erreur corrigée, progression.

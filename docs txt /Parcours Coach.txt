@@ -1,0 +1,114 @@
+Parcours Coach - "une séance + suivi 2 semaines"
+0) Préparation (avant séance)
+1. Créer/ouvrir la fiche élève : niveau, main, antécédents, objectifs en cours.
+2. Choisir le focus du jour (ex. service).
+3. Brief rapide à l'élève : on va filmer 2-3 séquences, corriger une erreur à la fois (règle d'or). 
+
+1) Séance live - feedback instantané (IN)
+1. Le coach active la caméra, l'élève joue en conditions réelles. L'IA observe et calcule les métriques en temps réel. 
+2. À chaque erreur détectée (hauteur, flexion, extension...), l'app déclenche un signal immédiat (bip / message visuel). 
+3. L'élève corrige instantanément ; l'IA valide la correction ou continue d'alerter jusqu'à conformité. Bénéfice : effet "coach à côté de toi". 
+Objectif de la phase live : faire sentir l'erreur et obtenir la 1ère correction sur le court (apprentissage immédiat).
+
+2) Analyse vidéo guidée (OUT ? compréhension)
+1. Le coach enregistre/importe la vidéo du geste (service/CD/RV). 
+2. L'IA analyse (pose + métriques) en backend et détecte l'erreur la plus évidente parmi les 6 poses clés. 
+3. L'app affiche côte à côte : image du geste incorrect vs référence pro, puis suggère une correction claire.
+4. Règle : on corrige une seule erreur à la fois, pose par pose, puis on passe à la suivante. 
+Objectif de la phase d'analyse : isoler la cause, ancrer un repère visuel, préparer la prescription.
+
+3) Prescription CoachBot - micro-programme 2 semaines
+1. CoachBot génère un plan 2 semaines (6-8 micro-séances de 10-15 min) avec :
+o Drills ciblés sur l'erreur dominante,
+o Fréquences & séries, repères de réussite (KPI),
+o Vidéos de référence et messages pédagogiques.
+(Ces éléments s'appuient sur l'orchestration de l'agent, l'analyse biomécanique et la personnalisation de l'élève.)
+2. Exemples :
+o Service - stabiliser le toss (2 sem) : drills mur + marque au sol, vidéos courtes, KPI "=70% toss en zone", progression vers placement/kick une fois atteint.
+o Coup droit - contact devant : S1 fondamentaux lents ? S2 déplacement + cible ? S3 contraintes de match ; KPI "=75% contacts devant".
+
+4) Suivi & boucles d'apprentissage
+* Checkpoints hebdo (auto) : CoachBot invite à refilmer 15-30 s, calcule les KPI, envoie alerte si régression ou stagnation. 
+* Messagerie / partage : le coach commente, envoie un clip annoté, ajuste la dose d'entraînement.
+
+5) Logique décisionnelle "Objectifs atteints / non atteints"
+A) Atteints
+* CoachBot valide et passe au palier supérieur (ex. placement service, variation kick).
+* Consolidation : 1-2 séances d'entretien/semaine + transfert en jeu (situations à thème).
+B) Non atteints
+* Diagnostic IA : identifie le goulot (ex. poignet ? toss instable).
+* Adapter : drill plus simple, contrainte visuelle, + fréquence courte quotidienne ; re-test à J+7.
+* Alerte coach si KPI < seuil 2 semaines : basculer vers variante B + séance guidée.
+
+6) Ce que voit concrètement le coach (écran/résumé)
+* Tableau de bord Coach : roster élèves, alertes IA, séances à venir, KPIs de progression. 
+* Mode Coach : suggestions, analyses, priorisation intelligente des corrections, personnalisation par profil.
+
+
+Ce que le Coach peut faire (profil Coach)
+1) Tableau de bord Coach
+* Vue roster : liste des élèves (photo, niveau, objectifs, disponibilité).
+* Alertes IA : "X a régressé sur le service", "Y atteint l'objectif rotation poignet".
+* Agenda : séances à venir, rappels, check-in en 1 clic.
+* KPIs rapides : assiduité, drills complétés, progression % par élève.
+2) Analyse & Feedback instantané
+* Capture/Upload vidéo (depuis élève ou coach).
+* Détection d'erreurs en temps réel (service, CD, RV, appuis).
+* Comparaison avant/après et référence pro (silhouette/angles clés).
+* Feedback auto prêt à envoyer (texte + mini-clips + consignes).
+3) Prescriptions IA (drills & programme)
+* Drills suggérés par l'IA selon l'erreur dominante (2-3 exercices).
+* Programme 2-3 semaines auto-généré : fréquences, séries, repères de réussite.
+* Personnalisation : niveau, matériel dispo, contraintes (temps/terrain).
+* Objectifs mesurables (KPI) : ex. "toss dans la zone", "vitesse bras", "équilibre impact".
+4) Gestion des élèves (mini-CRM)
+* Fiches élève : profil, historique blessures, main dominante, raquette/tension.
+* Objectifs (court/moyen terme) + notes privées coach.
+* Partage : envoyer un plan, un drill, un clip annoté.
+* Suivi d'adhérence : drills réalisés, no-show, progression vs objectifs.
+5) Planification de séance
+* Templates (évaluation, technique service, déplacement latéral, match play).
+* Check-list séance : échauffement ? exercice ? évaluation express.
+* Mode séance live : minuteur, compteur de répétitions, points clés à vérifier.
+6) Bibliothèque & Contenu
+* Catalogue drills (vidéo + consignes + objectifs).
+* Favoris & dossiers par thématique (service/kick, CD couvert, split-step).
+* Crée ton drill : filmer, décrire, tagger ? réutilisable avec d'autres élèves.
+7) Communication & motivation
+* Messages in-app (coach ? élève) avec pièces jointes vidéo.
+* Rappels automatiques (faire les drills, séance demain, test hebdo).
+* Badges & paliers pour l'élève (engagement, régularité, progrès technique).
+8) Mode Club (option Pro)
+* Vue multi-coach : assigner un élève à un coach, notes partagées.
+* Rapports Club : activité par coach, rétention par équipe, top 5 progrès.
+* Offres club : packs d'accès, codes promo, règles d'onboarding.
+9) Monétisation (option Pro)
+* Forfaits (pack 4 séances, plan mensuel suivi vidéo).
+* Paiement & factures (intégration Stripe), reçus automatiques.
+* Affiliation : parrainage élève/coach (tracking simple).
+10) Réglages & confidentialité
+* Partage contrôlé : ce qui est visible par l'élève/club.
+* Export des données (vidéos, métriques, programmes).
+* RGPD : suppression sur demande, consentement images.
+
+MVP vs Pro (priorités)
+MVP (indispensable)
+* Roster + fiches élève
+* Analyse vidéo + erreurs + feedback auto
+* Drills IA + programme 2-3 semaines
+* Partage de plan & messagerie
+* Agenda basique + rappels
+Pro (phase 2)
+* Mode Club multi-coach + rapports
+* Paiements/forfaits
+* Badges, scoring avancé, cohorte de progression
+* Templates de séance + minuteur live
+* Bibliothèque personnalisée & analytics détaillés
+
+Indicateurs clés (Coach)
+* Progression technique par geste (% d'erreurs résolues)
+* Adhérence aux exercices (drills complétés / prescrits)
+* Récurrence (séances/mois, vidéos/élève)
+* Rétention élève (D30/D90)
+* Satisfaction (NPS élève)
+

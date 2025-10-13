@@ -1,0 +1,152 @@
+Tennis AI 2.0 - Joueur Avancé / Compétiteur (Front-App)
+Document pour développeur front-end. L'AI-Agent (CoachBot) guide le joueur avancé ou compétiteur, avec des métriques détaillées et un focus sur l'optimisation fine des gestes et des enchaînements. Ce document décrit 3 scénarios complets : Première utilisation, Retour, Mode compétition.
+Principes UX spécifiques
+* Zéro onboarding long : accès direct aux modes d'analyse.
+* Métriques avancées affichées : timings, vitesses segmentaires, angles, profondeur balle.
+* Benchmarks pro affichés : score de performance par rapport au top mondial.
+* Modes spécifiques : Analyse live, enchaînements, export data pour coach/staff.
+* Multi-angle recommandé pour précision biomécanique.
+Scénario A - Première utilisation (accès direct haute performance)
+1) Connexion rapide
+UI :
+* Login direct (Apple / Google / Email)
+* Rôle : Joueur avancé / compétiteur
+AI-Agent :
+* " Prêt pour ta session de performance ? On lance une analyse complète ou ciblée ? "
+Actions utilisateur :
+* Se connecter
+* Sélectionner mode (complète / métrique spécifique)
+Données back-end :
+* role=player_advanced, preferences_metrics, locale
+2) Choix du mode
+UI :
+* Analyse complète : filmer séquence match ou série de coups (5 à 10 frappes)
+* Métrique spécifique : choisir ex. vitesse raquette, explosivité jambe avant
+AI-Agent :
+* " Analyse complète ou métrique spécifique ? "
+Actions utilisateur :
+* Choisir mode
+Données back-end :
+* analysis_mode, selected_metric
+3) Capture
+UI :
+* Multi-angle recommandé (latéral + arrière)
+* Indicateurs visuels pour placement caméra
+AI-Agent :
+* " Cinq coups max pour la mesure. Utilise l'angle latéral pour analyse biomécanique complète. "
+Actions utilisateur :
+* Filmer séquence
+Données back-end :
+* video_angle_meta, clip_id, fps
+4) Résultats
+UI :
+* Graphiques interactifs : angles, vitesses, timings
+* Comparatif joueur pro (top 10)
+* Score performance (% vs pro)
+AI-Agent :
+* " Rotation hanche à 110°, objectif 118°. Contact +2 cm trop tard. "
+Actions utilisateur :
+* Corriger en live
+* Sauvegarder
+Données back-end :
+* metrics_before, pro_benchmark, delta
+5) Correction live
+UI :
+* Overlays spécifiques
+* Affichage temps réel valeurs
+AI-Agent :
+* " Cherche +8° sur la rotation. Je t'indique en live avec l'indicateur vert. "
+Actions utilisateur :
+* Corriger en live
+* Valider
+Données back-end :
+* metrics_after, gain_percent
+6) Clôture
+UI :
+* Tableau performance + tendances
+AI-Agent :
+* " +3 % rotation, +2 % vitesse raquette. Niveau : 94% benchmark ATP. "
+Actions utilisateur :
+* Sauvegarder
+* Planifier prochaine session
+Données back-end :
+* session_id, improvement_metrics
+Scénario B - Retour (optimisation continue)
+1) Accueil personnalisé
+UI :
+* Stats depuis dernière session
+* Dernière perf : Service +2 % vitesse
+AI-Agent :
+* " On continue sur le service ou on passe à l'enchaînement service + 1er CD ? "
+Actions utilisateur :
+* Continuer
+* Nouveau pattern
+* Voir progression
+Données back-end :
+* last_focus_metric, next_suggested_metric
+2) Session
+UI :
+* Caméra live ouverte directement
+* Affichage delta en temps réel après chaque coup
+AI-Agent :
+* " Cible +5 % vitesse raquette aujourd'hui. "
+Actions utilisateur :
+* Filmer
+* Corriger
+* Valider
+Données back-end :
+* metrics_series, live_delta
+3) Clôture
+UI :
+* Export PDF/CSV métriques détaillées
+AI-Agent :
+* " Données prêtes pour ton coach. "
+Actions utilisateur :
+* Exporter
+* Sauvegarder
+Données back-end :
+* export_format, metrics_full
+Scénario C - Mode compétition / simulation match
+1) Choix pattern
+UI :
+* Ex : Service ? 1er CD ? Rallye court
+AI-Agent :
+* " On mesure la séquence complète et identifie le coup limitant. "
+Actions utilisateur :
+* Choisir pattern
+Données back-end :
+* pattern_id, selected_strokes
+2) Capture
+UI :
+* Multi-angle (latéral + arrière)
+* 3 répétitions
+AI-Agent :
+* " Garde la même intensité qu'en match. "
+Actions utilisateur :
+* Filmer pattern
+Données back-end :
+* pattern_clips, angles_meta
+3) Résultat
+UI :
+* Carte Bottleneck : ex. retour trop court, impact tardif
+* Plan correction immédiat sur point faible détecté
+AI-Agent :
+* " Coup limitant : retour. On le corrige maintenant. "
+Actions utilisateur :
+* Corriger
+* Rejouer pattern
+Données back-end :
+* bottleneck_metric, correction_plan
+4) Clôture
+UI :
+* Score match readiness (%)
+* Points forts/faibles
+* Plan 7 jours avant match
+AI-Agent :
+* " Match readiness : 88 %. Plan d'optimisation prêt pour la semaine. "
+Actions utilisateur :
+* Sauvegarder
+* Planifier
+* Partager
+Données back-end :
+* readiness_score, plan_7d

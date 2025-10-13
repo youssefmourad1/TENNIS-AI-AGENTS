@@ -1,0 +1,41 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+*.egg-info/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Documentation (not needed in container)
+docs txt/
+tennis ai agents docs/
+*.pdf
+*.docx
+*.md
+
+# Tests
+test_complete_workflows.py
+
+# Git
+.git/
+.gitignore
+
+# Mac
+.DS_Store
+
+# Sessions (mounted as volume)
+sessions/
+*.json
+
+# Misc
+*.log
+
