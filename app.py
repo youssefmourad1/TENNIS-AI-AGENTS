@@ -139,6 +139,7 @@ def initialize_session():
     if 'initialized' not in st.session_state:
         st.session_state.initialized = True
         st.session_state.user_type = None
+        st.session_state.language = 'fr'  # Langue par défaut
         st.session_state.agent = None
         st.session_state.messages = []
         st.session_state.tts_enabled = False
@@ -165,8 +166,15 @@ def get_tts_audio(text: str, message_id: str) -> Optional[bytes]:
     
     # Générer l'audio (LAZY - seulement si pas en cache)
     try:
+        # Créer/mettre à jour le client Polly avec la langue appropriée
         if st.session_state.polly_client is None:
-            st.session_state.polly_client = PollyClient(region='eu-west-1')
+            st.session_state.polly_client = PollyClient(
+                region='eu-west-1',
+                language=st.session_state.language
+            )
+        else:
+            # Synchroniser la langue
+            st.session_state.polly_client.set_language(st.session_state.language)
         
         audio_bytes = st.session_state.polly_client.synthesize(text)
         
@@ -176,7 +184,8 @@ def get_tts_audio(text: str, message_id: str) -> Optional[bytes]:
         return audio_bytes
         
     except Exception as e:
-        st.error(f"Erreur TTS: {str(e)}")
+        error_msg = f"TTS Error: {str(e)}" if st.session_state.language == 'en' else f"Erreur TTS: {str(e)}"
+        st.error(error_msg)
         return None
 
 
@@ -194,43 +203,94 @@ def render_header():
 
 def render_role_selection():
     """Afficher l'écran de sélection de rôle"""
-    st.markdown("## Bienvenue sur Tennis AI! 👋")
-    st.markdown("Pour commencer, sélectionne ton rôle:")
+    # Sélection de langue
+    st.markdown("## 🌍 Language / Langue")
+    
+    col_lang1, col_lang2 = st.columns(2)
+    
+    with col_lang1:
+        if st.button("🇫🇷 Français", key="lang_fr", use_container_width=True, 
+                    type="primary" if st.session_state.language == 'fr' else "secondary"):
+            st.session_state.language = 'fr'
+            st.rerun()
+    
+    with col_lang2:
+        if st.button("🇬🇧 English", key="lang_en", use_container_width=True,
+                    type="primary" if st.session_state.language == 'en' else "secondary"):
+            st.session_state.language = 'en'
+            st.rerun()
+    
+    st.markdown("---")
+    
+    # Titre selon la langue
+    if st.session_state.language == 'fr':
+        st.markdown("## Bienvenue sur Tennis AI! 👋")
+        st.markdown("Pour commencer, sélectionne ton rôle:")
+    else:
+        st.markdown("## Welcome to Tennis AI! 👋")
+        st.markdown("To get started, select your role:")
     
     col1, col2 = st.columns(2)
     
+    # Boutons selon la langue
+    player_text = "🎾 Joueur" if st.session_state.language == 'fr' else "🎾 Player"
+    coach_text = "🏆 Coach" if st.session_state.language == 'fr' else "🏆 Coach"
+    
     with col1:
-        if st.button("🎾 Joueur", key="btn_player", use_container_width=True):
+        if st.button(player_text, key="btn_player", use_container_width=True):
             start_onboarding("player")
     
     with col2:
-        if st.button("🏆 Coach", key="btn_coach", use_container_width=True):
+        if st.button(coach_text, key="btn_coach", use_container_width=True):
             start_onboarding("coach")
     
-    # Descriptions
+    # Descriptions selon la langue
     col1, col2 = st.columns(2)
     
-    with col1:
-        st.markdown("""
-        <div class="role-card">
-            <div class="role-card-icon">👤</div>
-            <div class="role-card-title">Joueur</div>
-            <div class="role-card-desc">
-                Améliore ta technique avec des analyses vidéo et des programmes personnalisés
+    if st.session_state.language == 'fr':
+        with col1:
+            st.markdown("""
+            <div class="role-card">
+                <div class="role-card-icon">👤</div>
+                <div class="role-card-title">Joueur</div>
+                <div class="role-card-desc">
+                    Améliore ta technique avec des analyses vidéo et des programmes personnalisés
+                </div>
             </div>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    with col2:
-        st.markdown("""
-        <div class="role-card">
-            <div class="role-card-icon">👨‍🏫</div>
-            <div class="role-card-title">Coach</div>
-            <div class="role-card-desc">
-                Gère tes élèves, analyse leurs performances et crée des programmes d'entraînement
+            """, unsafe_allow_html=True)
+        
+        with col2:
+            st.markdown("""
+            <div class="role-card">
+                <div class="role-card-icon">👨‍🏫</div>
+                <div class="role-card-title">Coach</div>
+                <div class="role-card-desc">
+                    Gère tes élèves, analyse leurs performances et crée des programmes d'entraînement
+                </div>
             </div>
-        </div>
-        """, unsafe_allow_html=True)
+            """, unsafe_allow_html=True)
+    else:
+        with col1:
+            st.markdown("""
+            <div class="role-card">
+                <div class="role-card-icon">👤</div>
+                <div class="role-card-title">Player</div>
+                <div class="role-card-desc">
+                    Improve your technique with video analysis and personalized training programs
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+        
+        with col2:
+            st.markdown("""
+            <div class="role-card">
+                <div class="role-card-icon">👨‍🏫</div>
+                <div class="role-card-title">Coach</div>
+                <div class="role-card-desc">
+                    Manage your students, analyze their performance and create training programs
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
 
 
 def start_onboarding(user_type: str):
@@ -242,14 +302,20 @@ def start_onboarding(user_type: str):
     """
     st.session_state.user_type = user_type
     
-    # Créer l'agent avec le type d'utilisateur
-    st.session_state.agent = OnboardingAgent(user_type=user_type)
+    # Créer l'agent avec le type d'utilisateur ET la langue
+    st.session_state.agent = OnboardingAgent(
+        user_type=user_type,
+        language=st.session_state.language
+    )
     
     # Obtenir le message de bienvenue
     welcome_message = st.session_state.agent.start_conversation()
     
     # Ajouter à l'historique
     st.session_state.messages = [("assistant", welcome_message)]
+    
+    # Reset audio cache (nouvelle langue potentiellement)
+    st.session_state.audio_cache = {}
     
     # Rafraîchir pour afficher le chat
     st.rerun()
@@ -264,17 +330,23 @@ def render_chat_message(role: str, content: str, message_id: str):
         content: Contenu du message
         message_id: ID unique pour le cache TTS
     """
+    # Textes selon la langue
+    you_label = "👤 Vous" if st.session_state.language == 'fr' else "👤 You"
+    agent_label = f"🤖 {st.session_state.agent.agent_name}"
+    listen_btn = "🔊 Écouter" if st.session_state.language == 'fr' else "🔊 Listen"
+    generating_msg = "Génération audio..." if st.session_state.language == 'fr' else "Generating audio..."
+    
     if role == "user":
         st.markdown(f'''
         <div class="chat-message user-message">
-            <div class="message-header">👤 Vous</div>
+            <div class="message-header">{you_label}</div>
             <div>{content}</div>
         </div>
         ''', unsafe_allow_html=True)
     else:
         st.markdown(f'''
         <div class="chat-message assistant-message">
-            <div class="message-header">🤖 CoachBot</div>
+            <div class="message-header">{agent_label}</div>
             <div>{content}</div>
         </div>
         ''', unsafe_allow_html=True)
@@ -287,8 +359,8 @@ def render_chat_message(role: str, content: str, message_id: str):
             # Bouton ou lecteur selon l'état
             if not audio_cached:
                 # Bouton pour générer l'audio (LAZY)
-                if st.button(f"🔊 Écouter", key=f"tts_btn_{message_id}"):
-                    with st.spinner("Génération audio..."):
+                if st.button(listen_btn, key=f"tts_btn_{message_id}"):
+                    with st.spinner(generating_msg):
                         audio_bytes = get_tts_audio(content, message_id)
                         if audio_bytes:
                             st.rerun()
@@ -300,34 +372,50 @@ def render_chat_message(role: str, content: str, message_id: str):
 
 def render_chat_interface():
     """Afficher l'interface de chat"""
+    # Textes selon la langue
+    is_fr = st.session_state.language == 'fr'
+    
+    options_title = "⚙️ Options" if is_fr else "⚙️ Settings"
+    audio_label = "🔊 Activer l'audio" if is_fr else "🔊 Enable audio"
+    audio_help = "Affiche un bouton 🔊 Écouter sous chaque message" if is_fr else "Shows a 🔊 Listen button under each message"
+    audio_enabled = "✅ Audio activé - Bouton 🔊 visible!" if is_fr else "✅ Audio enabled - 🔊 Button visible!"
+    audio_disabled = "ℹ️ Audio désactivé" if is_fr else "ℹ️ Audio disabled"
+    role_label = "Rôle" if is_fr else "Role"
+    stage_label = "Étape" if is_fr else "Stage"
+    new_session = "🔄 Nouvelle session" if is_fr else "🔄 New session"
+    language_label = "Langue" if is_fr else "Language"
+    
+    user_type_display = "Joueur 🎾" if st.session_state.user_type == "player" else "Coach 🏆"
+    if not is_fr:
+        user_type_display = "Player 🎾" if st.session_state.user_type == "player" else "Coach 🏆"
+    
     # Sidebar avec options
     with st.sidebar:
-        st.markdown("### ⚙️ Options")
+        st.markdown(f"### {options_title}")
         
         # Toggle TTS avec feedback visuel
-        tts_before = st.session_state.tts_enabled
         st.session_state.tts_enabled = st.checkbox(
-            "🔊 Activer l'audio",
+            audio_label,
             value=st.session_state.tts_enabled,
-            help="Affiche un bouton 🔊 Écouter sous chaque message de CoachBot"
+            help=audio_help
         )
         
         # Afficher le statut
         if st.session_state.tts_enabled:
-            st.success("✅ Audio activé - Bouton 🔊 visible!")
+            st.success(audio_enabled)
         else:
-            st.info("ℹ️ Audio désactivé")
+            st.info(audio_disabled)
         
         st.markdown("---")
         
         # Info utilisateur
-        user_type_display = "Joueur 🎾" if st.session_state.user_type == "player" else "Coach 🏆"
-        st.markdown(f"**Rôle:** {user_type_display}")
-        st.markdown(f"**Étape:** {st.session_state.agent.get_current_stage()}")
+        st.markdown(f"**{role_label}:** {user_type_display}")
+        st.markdown(f"**{language_label}:** {'🇫🇷 Français' if is_fr else '🇬🇧 English'}")
+        st.markdown(f"**{stage_label}:** {st.session_state.agent.get_current_stage()}")
         
         st.markdown("---")
         
-        if st.button("🔄 Nouvelle session"):
+        if st.button(new_session):
             # Reset
             st.session_state.user_type = None
             st.session_state.agent = None
@@ -343,22 +431,30 @@ def render_chat_interface():
     # Zone de saisie
     st.markdown("---")
     
+    is_fr = st.session_state.language == 'fr'
+    message_label = "Votre message:" if is_fr else "Your message:"
+    message_placeholder = "Tapez votre réponse ici..." if is_fr else "Type your answer here..."
+    send_btn = "📤 Envoyer" if is_fr else "📤 Send"
+    save_btn = "💾 Sauvegarder" if is_fr else "💾 Save"
+    session_saved = "Session sauvegardée!" if is_fr else "Session saved!"
+    thinking_msg = "CoachBot réfléchit..." if is_fr else "CoachBot is thinking..."
+    
     with st.form(key="message_form", clear_on_submit=True):
         user_input = st.text_input(
-            "Votre message:",
-            placeholder="Tapez votre réponse ici...",
+            message_label,
+            placeholder=message_placeholder,
             label_visibility="collapsed"
         )
         
         col1, col2, col3 = st.columns([1, 1, 4])
         
         with col1:
-            submit = st.form_submit_button("📤 Envoyer", use_container_width=True)
+            submit = st.form_submit_button(send_btn, use_container_width=True)
         
         with col2:
-            if st.form_submit_button("💾 Sauvegarder", use_container_width=True):
+            if st.form_submit_button(save_btn, use_container_width=True):
                 st.session_state.agent.save_session()
-                st.success("Session sauvegardée!")
+                st.success(session_saved)
     
     # Traiter le message
     if submit and user_input:
@@ -366,7 +462,7 @@ def render_chat_interface():
         st.session_state.messages.append(("user", user_input))
         
         # Obtenir la réponse de l'agent
-        with st.spinner("CoachBot réfléchit..."):
+        with st.spinner(thinking_msg):
             response = st.session_state.agent.chat(user_input)
         
         # Ajouter la réponse
@@ -387,8 +483,8 @@ def main():
     # Vérifier les credentials AWS
     credentials = get_aws_credentials()
     if not credentials:
-        st.error("⚠️ Credentials AWS non configurées!")
-        st.info("Configure les variables d'environnement: AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_SESSION_TOKEN")
+        st.error("⚠️ AWS Credentials not configured!" if st.session_state.language == 'en' else "⚠️ Credentials AWS non configurées!")
+        st.info("Set environment variables: AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_SESSION_TOKEN" if st.session_state.language == 'en' else "Configure les variables d'environnement: AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_SESSION_TOKEN")
         st.stop()
     
     # Afficher l'interface appropriée

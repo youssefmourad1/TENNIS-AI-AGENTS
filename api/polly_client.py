@@ -11,17 +11,34 @@ from botocore.exceptions import ClientError
 class PollyClient:
     """Client pour AWS Polly (TTS)"""
     
-    def __init__(self, region: str = 'eu-west-1'):
+    # Configuration des voix par langue
+    VOICES = {
+        'fr': {
+            'voice_id': 'Lea',
+            'engine': 'neural',
+            'language_code': 'fr-FR'
+        },
+        'en': {
+            'voice_id': 'Joanna',  # Voix américaine naturelle
+            'engine': 'neural',
+            'language_code': 'en-US'
+        }
+    }
+    
+    def __init__(self, region: str = 'eu-west-1', language: str = 'fr'):
         """
         Initialiser le client Polly
         
         Args:
             region: Région AWS
+            language: Langue ('fr' ou 'en')
         """
         self.region = region
+        self.language = language.lower()
         self.client = boto3.client('polly', region_name=region)
-        self.default_voice = 'Lea'  # Voix française naturelle
-        self.default_engine = 'neural'
+        
+        # Récupérer la configuration de la voix
+        self.voice_config = self.VOICES.get(self.language, self.VOICES['fr'])
     
     def synthesize(
         self,
@@ -34,14 +51,15 @@ class PollyClient:
         
         Args:
             text: Texte à synthétiser
-            voice_id: ID de la voix (défaut: Lea)
-            engine: Engine (neural ou standard)
+            voice_id: ID de la voix (optionnel, utilise la config de langue par défaut)
+            engine: Engine (optionnel, utilise la config de langue par défaut)
             
         Returns:
             bytes: Audio MP3 ou None si erreur
         """
-        voice_id = voice_id or self.default_voice
-        engine = engine or self.default_engine
+        voice_id = voice_id or self.voice_config['voice_id']
+        engine = engine or self.voice_config['engine']
+        language_code = self.voice_config['language_code']
         
         try:
             response = self.client.synthesize_speech(
@@ -49,7 +67,7 @@ class PollyClient:
                 OutputFormat='mp3',
                 VoiceId=voice_id,
                 Engine=engine,
-                LanguageCode='fr-FR'
+                LanguageCode=language_code
             )
             
             return response['AudioStream'].read()
@@ -61,6 +79,16 @@ class PollyClient:
         
         except Exception as e:
             raise Exception(f"Erreur TTS: {str(e)}")
+    
+    def set_language(self, language: str):
+        """
+        Changer la langue du TTS
+        
+        Args:
+            language: 'fr' ou 'en'
+        """
+        self.language = language.lower()
+        self.voice_config = self.VOICES.get(self.language, self.VOICES['fr'])
     
     def get_available_voices(self, language_code: str = 'fr-FR') -> list:
         """

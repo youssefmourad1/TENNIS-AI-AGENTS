@@ -76,6 +76,8 @@ RÈGLE D'OR: Une seule erreur à la fois!
     def __init__(
         self,
         user_type: str,
+        language: str = 'fr',
+        agent_name: str = 'CoachBot',
         region: str = 'eu-west-1',
         model_id: str = 'anthropic.claude-3-haiku-20240307-v1:0'
     ):
@@ -84,10 +86,14 @@ RÈGLE D'OR: Une seule erreur à la fois!
         
         Args:
             user_type: Type d'utilisateur ('player' ou 'coach')
+            language: Langue ('fr' pour français, 'en' pour anglais)
+            agent_name: Nom de l'agent
             region: Région AWS
             model_id: ID du modèle Claude
         """
         self.user_type = user_type.lower()
+        self.language = language.lower()
+        self.agent_name = agent_name
         self.bedrock = BedrockClient(region=region, model_id=model_id)
         
         # État de la conversation
@@ -100,9 +106,16 @@ RÈGLE D'OR: Une seule erreur à la fois!
     
     def _build_system_prompt(self) -> str:
         """Construire le prompt système avec la connaissance Tennis AI"""
+        if self.language == 'fr':
+            return self._build_french_prompt()
+        else:
+            return self._build_english_prompt()
+    
+    def _build_french_prompt(self) -> str:
+        """Prompt système en français"""
         user_type_fr = "Joueur" if self.user_type == "player" else "Coach"
         
-        return f"""Tu es CoachBot, l'assistant IA d'onboarding pour la plateforme Tennis AI.
+        return f"""Tu es {self.agent_name}, l'assistant IA d'onboarding pour la plateforme Tennis AI.
 
 TON RÔLE:
 Tu guides les nouveaux {user_type_fr}s à travers le processus complet d'onboarding 
@@ -116,11 +129,11 @@ CONTEXTE ACTUEL:
 - Profil collecté: {json.dumps(self.user_profile, indent=2, ensure_ascii=False)}
 
 TON STYLE:
-- Chaleureux et encourageant
-- 2-4 phrases par réponse
+- ULTRA CONCIS: 1-2 phrases MAXIMUM par réponse
+- Chaleureux mais BREF
 - UNE question claire à la fois
-- Utilise la terminologie tennis appropriée
-- Sois enthousiaste!
+- Va droit au but, pas de bavardage
+- Sois enthousiaste mais concis!
 
 ÉTAPES D'ONBOARDING:
 {' → '.join(self.stages)}
@@ -130,32 +143,89 @@ TON STYLE:
 Basé sur l'étape actuelle et le message de l'utilisateur, continue la conversation naturellement.
 Avance à travers le flux d'onboarding étape par étape.
 
-RAPPEL: Tu es un coach IA, pas juste un bot de formulaire. Rends ça engageant!
+RÈGLES STRICTES:
+- Maximum 1-2 phrases courtes
+- Pas de longs paragraphes
+- Efficace et pratique
+- Questions directes
+
+RAPPEL: Tu es un coach IA efficace, pas bavard. Sois CONCIS!
 RÉPONDS TOUJOURS EN FRANÇAIS!"""
+    
+    def _build_english_prompt(self) -> str:
+        """Prompt système en anglais"""
+        user_type_en = "Player" if self.user_type == "player" else "Coach"
+        
+        return f"""You are {self.agent_name}, the AI onboarding assistant for Tennis AI platform.
+
+YOUR ROLE:
+You guide new {user_type_en}s through the complete onboarding process 
+in a warm, conversational, and professional manner. You are an expert tennis coach.
+
+IMPORTANT: ALWAYS RESPOND IN ENGLISH!
+
+CURRENT CONTEXT:
+- User type: {user_type_en}
+- Current stage: {self.current_stage}
+- Profile collected: {json.dumps(self.user_profile, indent=2, ensure_ascii=False)}
+
+YOUR STYLE:
+- ULTRA CONCISE: 1-2 sentences MAXIMUM per response
+- Warm but BRIEF
+- ONE clear question at a time
+- Get straight to the point, no fluff
+- Be enthusiastic but concise!
+
+ONBOARDING STAGES:
+{' → '.join(self.stages)}
+
+{self.TENNIS_AI_KNOWLEDGE}
+
+Based on the current stage and user's message, continue the conversation naturally.
+Progress through the onboarding flow step by step.
+
+STRICT RULES:
+- Maximum 1-2 short sentences
+- No long paragraphs
+- Efficient and practical
+- Direct questions
+
+REMINDER: You're an efficient AI coach, not chatty. Be CONCISE!
+ALWAYS RESPOND IN ENGLISH!"""
     
     def start_conversation(self) -> str:
         """
-        Démarrer la conversation avec un message de bienvenue adapté au type d'utilisateur
+        Démarrer la conversation avec un message de bienvenue adapté au type d'utilisateur et à la langue
         
         Returns:
             str: Message de bienvenue
         """
-        if self.user_type == "player":
-            welcome = """Bienvenue sur Tennis AI! 🎾
-
-Je suis CoachBot, ton assistant personnel pour améliorer ton jeu. 
-Je vais t'accompagner pas à pas pour analyser ta technique et créer ton premier programme d'entraînement personnalisé.
-
-Pour commencer, dis-moi comment tu t'appelles et quel âge tu as?"""
+        if self.language == 'fr':
+            return self._get_french_welcome()
         else:
-            welcome = """Bienvenue sur Tennis AI! 🎾
+            return self._get_english_welcome()
+    
+    def _get_french_welcome(self) -> str:
+        """Message de bienvenue en français"""
+        if self.user_type == "player":
+            return f"""Bienvenue sur Tennis AI! 🎾 Je suis {self.agent_name}.
 
-Je suis CoachBot, ton assistant pour gérer et analyser tes élèves.
-Je vais te guider pour configurer ton espace coach et découvrir tous les outils disponibles.
+Comment tu t'appelles et quel âge tu as?"""
+        else:
+            return f"""Bienvenue sur Tennis AI! 🎾 Je suis {self.agent_name}.
 
-Pour commencer, dis-moi ton nom et le nom de ton club?"""
-        
-        return welcome
+Ton nom et le nom de ton club?"""
+    
+    def _get_english_welcome(self) -> str:
+        """Message de bienvenue en anglais"""
+        if self.user_type == "player":
+            return f"""Welcome to Tennis AI! 🎾 I'm {self.agent_name}.
+
+What's your name and age?"""
+        else:
+            return f"""Welcome to Tennis AI! 🎾 I'm {self.agent_name}.
+
+Your name and club name?"""
     
     def chat(self, user_message: str) -> str:
         """
