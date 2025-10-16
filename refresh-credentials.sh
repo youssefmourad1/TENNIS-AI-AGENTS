@@ -1,0 +1,42 @@
+#!/bin/bash
+# Script to help refresh AWS credentials
+
+echo "🔐 AWS Credentials Refresh Helper"
+echo "=================================="
+echo ""
+echo "Your AWS credentials have expired!"
+echo ""
+echo "Please follow these steps:"
+echo ""
+echo "1. Log into your AWS Console/Academy"
+echo "2. Navigate to AWS Details or Credentials section"
+echo "3. Copy your NEW credentials"
+echo ""
+echo "4. Then run this command to edit your .env file:"
+echo ""
+echo "   nano .env"
+echo ""
+echo "5. Update these three values with your NEW credentials:"
+echo ""
+echo "   AWS_ACCESS_KEY_ID=your_new_access_key"
+echo "   AWS_SECRET_ACCESS_KEY=your_new_secret_key"
+echo "   AWS_SESSION_TOKEN=your_new_session_token"
+echo ""
+echo "6. Save the file (Ctrl+O, Enter, Ctrl+X in nano)"
+echo ""
+echo "7. Test your credentials:"
+echo ""
+echo "   aws sts get-caller-identity"
+echo ""
+echo "8. If successful, run the deployment again:"
+echo ""
+echo "   ./deploy-apprunner.sh"
+echo ""
+echo "=================================="
+echo ""
+echo "Opening .env file in nano in 3 seconds..."
+echo "Press Ctrl+C to cancel"
+sleep 3
+
+nano .env
+

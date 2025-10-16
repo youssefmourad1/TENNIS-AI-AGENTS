@@ -7,6 +7,7 @@ import streamlit as st
 import sys
 import os
 from typing import Optional
+from dotenv import load_dotenv
 
 # Ajouter le répertoire courant au path
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
@@ -14,6 +15,9 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 from agents.onboarding_agent import OnboardingAgent
 from api.polly_client import PollyClient
 from utils import get_aws_credentials
+
+# Charger les variables d'environnement depuis .env (si présent)
+load_dotenv()
 
 
 # ==================== CONFIGURATION ====================
