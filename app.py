@@ -518,11 +518,10 @@ def main():
     load_custom_css()
     render_header()
     
-    # Vérifier les credentials AWS
+    # Vérifier les credentials AWS, proposer UI si absents
     credentials = get_aws_credentials()
-    if not credentials:
-        st.error("⚠️ AWS Credentials not configured!" if st.session_state.language == 'en' else "⚠️ Credentials AWS non configurées!")
-        st.info("Set environment variables: AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_SESSION_TOKEN" if st.session_state.language == 'en' else "Configure les variables d'environnement: AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_SESSION_TOKEN")
+    if not credentials and not st.session_state.get("aws_credentials_configured"):
+        render_credentials_setup()
         st.stop()
     
     # Afficher l'interface appropriée
