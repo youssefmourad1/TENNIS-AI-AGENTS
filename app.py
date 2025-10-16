@@ -19,6 +19,40 @@ from utils import get_aws_credentials
 # Charger les variables d'environnement depuis .env (si présent)
 load_dotenv()
 
+def render_credentials_setup() -> None:
+    """UI pour saisir les credentials AWS si non configurés."""
+    st.markdown("### 🔐 Configurer vos identifiants AWS")
+    st.info("Collez vos identifiants ici. Ils ne seront utilisés que localement par cette session.")
+
+    with st.form(key="aws_credentials_form"):
+        col1, col2 = st.columns(2)
+        with col1:
+            access_key = st.text_input("AWS_ACCESS_KEY_ID", value=os.getenv("AWS_ACCESS_KEY_ID", ""))
+            region = st.text_input("AWS_REGION", value=os.getenv("AWS_REGION", "eu-west-1"))
+        with col2:
+            secret_key = st.text_input("AWS_SECRET_ACCESS_KEY", value=os.getenv("AWS_SECRET_ACCESS_KEY", ""))
+            session_token = st.text_area("AWS_SESSION_TOKEN (optionnel)", value=os.getenv("AWS_SESSION_TOKEN", ""), height=100)
+
+        submitted = st.form_submit_button("✅ Enregistrer et continuer")
+
+    if submitted:
+        # Validation minimale
+        if not access_key or not secret_key:
+            st.error("AWS_ACCESS_KEY_ID et AWS_SECRET_ACCESS_KEY sont requis")
+            return
+
+        # Exporter dans l'environnement du processus
+        os.environ["AWS_ACCESS_KEY_ID"] = access_key.strip()
+        os.environ["AWS_SECRET_ACCESS_KEY"] = secret_key.strip()
+        if session_token.strip():
+            os.environ["AWS_SESSION_TOKEN"] = session_token.strip()
+        os.environ["AWS_REGION"] = (region.strip() or "eu-west-1")
+
+        # Marquer comme configuré et relancer
+        st.session_state["aws_credentials_configured"] = True
+        st.success("Identifiants sauvegardés. Rechargement...")
+        st.rerun()
+
 
 # ==================== CONFIGURATION ====================
 
